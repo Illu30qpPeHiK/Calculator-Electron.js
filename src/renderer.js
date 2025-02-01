@@ -19,25 +19,27 @@ document.addEventListener('DOMContentLoaded', () => {
     return !lastPart.includes('.');
   };
 
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      if (button.id !== 'clear' && button.id !== 'backspace' && button.id !== 'equals' && button.id !== 'decimal' && button.id !== 'openBracket' && button.id !== 'closeBracket') {
-        if (inputField.value === '0' && button.textContent !== '0' && !inputField.value.includes('.')) {
-          inputField.value = '0.';
-        } else if (inputField.value.endsWith('0') && !inputField.value.includes('.')) {
-          inputField.value = inputField.value.slice(0, -1) + '0.';
-        }
-        if (operators.includes(button.textContent) && operators.includes(inputField.value.slice(-1))) {
-          return;
-        }
-        inputField.value += button.textContent;
-      } else if (button.id === 'decimal' && canAddDecimal()) {
-        inputField.value += '.';
+  const handleButtonClick = (button) => {
+    if (button.id !== 'clear' && button.id !== 'backspace' && button.id !== 'equals' && button.id !== 'decimal' && button.id !== 'openBracket' && button.id !== 'closeBracket') {
+      if (inputField.value === '0' && button.textContent !== '0' && !inputField.value.includes('.')) {
+        inputField.value = '0.';
+      } else if (inputField.value.endsWith('0') && !inputField.value.includes('.') && !operators.includes(button.textContent)) {
+        inputField.value = inputField.value.slice(0, -1) + '0.';
       }
-      button.classList.remove('active');
-      void button.offsetWidth; // Trigger reflow
-      button.classList.add('active');
-    });
+      if (operators.includes(button.textContent) && operators.includes(inputField.value.slice(-1))) {
+        return;
+      }
+      inputField.value += button.textContent;
+    } else if (button.id === 'decimal' && canAddDecimal()) {
+      inputField.value += '.';
+    }
+    button.classList.remove('active');
+    void button.offsetWidth; // Trigger reflow
+    button.classList.add('active');
+  };
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => handleButtonClick(button));
   });
 
   clearButton.addEventListener('click', () => {
@@ -55,13 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   equalsButton.addEventListener('click', () => {
-    if (firstEqualsClick) {
+    if (firstEqualsClick || inputField.value.trim() === '') {
       firstEqualsClick = false;
       inputField.value = '0';
       return;
     }
     try {
-      inputField.value = eval(inputField.value);
+      inputField.value = eval(inputField.value.replace(/(\.0+|(\.\d+?)0+)$/, '$2'));
     } catch (e) {
       inputField.value = 'Error';
     }
@@ -156,13 +158,13 @@ document.addEventListener('DOMContentLoaded', () => {
         button = closeBracketButton;
         break;
       case 'Enter':
-        if (firstEqualsClick) {
+        if (firstEqualsClick || inputField.value.trim() === '') {
           firstEqualsClick = false;
           inputField.value = '0';
           return;
         }
         try {
-          inputField.value = eval(inputField.value);
+          inputField.value = eval(inputField.value.replace(/(\.0+|(\.\d+?)0+)$/, '$2'));
         } catch (e) {
           inputField.value = 'Error';
         }
