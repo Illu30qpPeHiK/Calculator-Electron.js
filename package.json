@@ -1,15 +1,19 @@
 {
-  "name": "my-new-app",
-  "productName": "my-new-app",
+  "name": "calculator-electron-vite",
+  "productName": "Calculator",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "My Electron calculator application",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "make:mac": "electron-forge make --platform=darwin",
+    "dist": "electron-builder",
+    "dist:mac:dmg": "electron-builder --mac --dmg",
+    "dist:win:exe": "electron-builder --win --x64"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.6.1",
@@ -22,12 +26,23 @@
     "@electron-forge/plugin-vite": "^7.6.1",
     "@electron/fuses": "^1.8.0",
     "electron": "34.0.2",
-    "vite": "^5.0.12"
+    "vite": "^5.0.12",
+    "electron-builder": "^24.3.0"
   },
   "keywords": [],
-  "author": "bogun",
+  "author": "Andriy Bogutskiy",
   "license": "MIT",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1"
+  },
+  "build": {
+    "appId": "com.ABerCopr.calculator",
+    "productName": "Calculator",
+    "mac": {
+      "target": ["dmg", "zip"]
+    },
+    "win": {
+      "target": ["nsis", "zip"]
+    }
   }
 }
