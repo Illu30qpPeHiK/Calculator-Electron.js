@@ -62,3 +62,51 @@ body {
 .numberButton.clear {
   grid-column: span 2;
 }
+
+.hidden {
+  display: none;
+}
+
+.additional-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem; /* Add small indents between buttons */
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.additionalButton {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  background-color: #7d2ae8;
+  transition: background-color 0.2s ease;
+}
+
+.additionalButton:hover {
+  background-color: #6c1fd1;
+}
+
+.additionalButton:active {
+  background-color: #5b17b3;
+}
+
+#expand {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  background-color: #7d2ae8;
+  transition: background-color 0.2s ease;
+}
+
+#expand:hover {
+  background-color: #6c1fd1;
+}
+
+#expand:active {
+  background-color: #5b17b3;
+}

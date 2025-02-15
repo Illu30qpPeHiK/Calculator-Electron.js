@@ -5,8 +5,8 @@ const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 400,
-    height: 345,
-    resizable: false, // Make the window non-resizable
+    height: 442,
+    resizable: true, // Make the window non-resizable
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },

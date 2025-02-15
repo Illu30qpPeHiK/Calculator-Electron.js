@@ -7,10 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const backspaceButton = document.getElementById('backspace');
   const equalsButton = document.getElementById('equals');
   const decimalButton = document.getElementById('decimal');
-  const openBracketButton = document.getElementById('openBracket');
-  const closeBracketButton = document.getElementById('closeBracket');
+  const expandButton = document.getElementById('expand');
+  const additionalButtons = document.querySelectorAll('.additionalButton');
   const operators = ['+', '-', '*', '/'];
-  const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/', '(', ')', '.', 'Enter', 'Backspace', 'Escape', 'c', 'C', 'о', 'О'];
+  const validKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '+', '-', '*', '/', '.', 'Enter', 'Backspace', 'Escape', 'c', 'C', 'о', 'О', '£', 's', 'S', 'і', 'І'];
   let firstEqualsClick = true;
 
   const canAddDecimal = () => {
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const handleButtonClick = (button) => {
-    if (button.id !== 'clear' && button.id !== 'backspace' && button.id !== 'equals' && button.id !== 'decimal' && button.id !== 'openBracket' && button.id !== 'closeBracket') {
+    if (!['clear', 'backspace', 'equals', 'decimal', 'expand'].includes(button.id) && !button.dataset.function) {
       if (inputField.value === '0' && button.textContent !== '0' && !inputField.value.includes('.')) {
         inputField.value = '0.';
       } else if (inputField.value.endsWith('0') && !inputField.value.includes('.') && !operators.includes(button.textContent)) {
@@ -32,10 +32,55 @@ document.addEventListener('DOMContentLoaded', () => {
       inputField.value += button.textContent;
     } else if (button.id === 'decimal' && canAddDecimal()) {
       inputField.value += '.';
+    } else if (button.dataset.function) {
+      if (inputField.value && !operators.includes(inputField.value.slice(-1))) {
+        inputField.value += ')';
+      }
+      inputField.value += button.dataset.function + '(';
     }
     button.classList.remove('active');
     void button.offsetWidth; // Trigger reflow
     button.classList.add('active');
+  };
+
+  const handleFunction = (expression, func) => {
+    const match = expression.match(new RegExp(`${func}\\((\\d+(\\.\\d+)?)\\)`));
+    if (match) {
+      const value = parseFloat(match[1]);
+      if (isNaN(value)) {
+        return 'Error';
+      } else {
+        switch (func) {
+          case '√':
+            return expression.replace(match[0], Math.sqrt(value).toString());
+          case 'sin':
+            return expression.replace(match[0], Math.sin(value).toString());
+          case 'cos':
+            return expression.replace(match[0], Math.cos(value).toString());
+          case 'tan':
+            return expression.replace(match[0], Math.tan(value).toString());
+          case 'log':
+            return expression.replace(match[0], Math.log(value).toString());
+          default:
+            return expression;
+        }
+      }
+    }
+    return expression;
+  };
+
+  const handleFunctions = (expression) => {
+    const functions = ['√', 'sin', 'cos', 'tan', 'log'];
+    functions.forEach(func => {
+      expression = handleFunction(expression, func);
+    });
+    return expression;
+  };
+
+  const toggleAdditionalButtons = () => {
+    additionalButtons.forEach(button => {
+      button.classList.toggle('hidden');
+    });
   };
 
   buttons.forEach(button => {
@@ -63,7 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     try {
-      inputField.value = eval(inputField.value.replace(/(\.0+|(\.\d+?)0+)$/, '$2'));
+      let expression = inputField.value;
+      expression = handleFunctions(expression);
+      inputField.value = eval(expression.replace(/(\.0+|(\.\d+?)0+)$/, '$2'));
     } catch (e) {
       inputField.value = 'Error';
     }
@@ -81,22 +128,19 @@ document.addEventListener('DOMContentLoaded', () => {
     decimalButton.classList.add('active');
   });
 
-  openBracketButton.addEventListener('click', () => {
-    inputField.value += '(';
-    openBracketButton.classList.remove('active');
-    void openBracketButton.offsetWidth; // Trigger reflow
-    openBracketButton.classList.add('active');
+  expandButton.addEventListener('click', () => {
+    toggleAdditionalButtons();
+    expandButton.classList.remove('active');
+    void expandButton.offsetWidth; // Trigger reflow
+    expandButton.classList.add('active');
   });
 
-  closeBracketButton.addEventListener('click', () => {
-    inputField.value += ')';
-    closeBracketButton.classList.remove('active');
-    void closeBracketButton.offsetWidth; // Trigger reflow
-    closeBracketButton.classList.add('active');
+  additionalButtons.forEach(button => {
+    button.addEventListener('click', () => handleButtonClick(button));
   });
 
   document.addEventListener('keydown', (event) => {
-    const key = event.key;
+    const key = event.key.toLowerCase();
     if (!validKeys.includes(key)) {
       event.preventDefault();
       return;
@@ -149,32 +193,26 @@ document.addEventListener('DOMContentLoaded', () => {
         inputField.value += key;
         button = document.getElementById('divide');
         break;
-      case '(':
-        inputField.value += key;
-        button = openBracketButton;
-        break;
-      case ')':
-        inputField.value += key;
-        button = closeBracketButton;
-        break;
-      case 'Enter':
+      case 'enter':
         if (firstEqualsClick || inputField.value.trim() === '') {
           firstEqualsClick = false;
           inputField.value = '0';
           return;
         }
         try {
-          inputField.value = eval(inputField.value.replace(/(\.0+|(\.\d+?)0+)$/, '$2'));
+          let expression = inputField.value;
+          expression = handleFunctions(expression);
+          inputField.value = eval(expression.replace(/(\.0+|(\.\d+?)0+)$/, '$2'));
         } catch (e) {
           inputField.value = 'Error';
         }
         button = equalsButton;
         break;
-      case 'Backspace':
+      case 'backspace':
         inputField.value = inputField.value.slice(0, -1);
         button = backspaceButton;
         break;
-      case 'Escape':
+      case 'escape':
         inputField.value = '';
         button = clearButton;
         break;
@@ -185,11 +223,15 @@ document.addEventListener('DOMContentLoaded', () => {
         button = decimalButton;
         break;
       case 'c':
-      case 'C':
       case 'о':
-      case 'О':
         inputField.value = '';
         button = clearButton;
+        break;
+      case '£':
+      case 's':
+      case 'і':
+        toggleAdditionalButtons();
+        button = expandButton;
         break;
       default:
         break;

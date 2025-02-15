@@ -14,6 +14,17 @@ Keyboard shortcuts for quick input
 
 Support for dark and light themes
 
+⌨️ Keyboard Shortcuts
+
+- `0-9`: Enter numbers
+- `+`: Addition
+- `-`: Subtraction
+- `*`: Multiplication
+- `/`: Division
+- `Enter`: Calculate the result
+- `Backspace`: Delete the last entry
+- `Esc`: Clear the input
+
 🛠️ Installation and Running
 
 Clone the repository:
@@ -50,5 +61,7 @@ For Windows, macOS, and Linux, the electron-builder can be configured in package
 If you have any questions or find a bug, please create an issue in the repository.
 
 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
