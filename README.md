@@ -24,6 +24,10 @@ Support for dark and light themes
 - `Enter`: Calculate the result
 - `Backspace`: Delete the last entry
 - `Esc`: Clear the input
+- `(`: Open parenthesis
+- `)`: Close parenthesis
+- `S`: Provides access to advanced mathematical operations
+- `C`: Clear the current input
 
 🛠️ Installation and Running
 
