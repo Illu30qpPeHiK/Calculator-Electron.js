@@ -33,7 +33,7 @@ Support for dark and light themes
 
 Clone the repository:
 
-git clone https://github.com/Illu30qpPeHiK/Calculator-Electron.js.git
+git clone https://github.com/Illu30qpPeHiK/Calculator-Electron.js.git <br>
 cd Calculator-Electron.js
 
 Install dependencies:
